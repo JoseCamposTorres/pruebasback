@@ -5,6 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
+import { env } from './config/env';
 
 import productRoutes from './routes/productClientRoutes';
 import authRoutes from './routes/authRoutes';
@@ -24,20 +25,14 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
-const allowedOrigins =
-  (process.env.ALLOWED_ORIGINS ?? '')
-    .split(',')
-    .map(o => o.trim())
-    .filter(Boolean);
-
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
-    if (allowedOrigins.length === 0) {
+    if (env.allowedOrigins.length === 0) {
       const isLocal = origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1');
       return callback(null, isLocal);
     }
-    return callback(null, allowedOrigins.includes(origin));
+    return callback(null, env.allowedOrigins.includes(origin));
   },
   credentials: true,
   methods: ['GET','POST','PUT','DELETE']

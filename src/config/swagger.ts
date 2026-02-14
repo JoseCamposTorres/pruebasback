@@ -1,5 +1,6 @@
 import swaggerJSDoc from "swagger-jsdoc";
 import path from "path";
+import { env } from "./env";
 
 const options: swaggerJSDoc.Options = {
   definition: {
@@ -9,14 +10,7 @@ const options: swaggerJSDoc.Options = {
       version: "1.0.0",
       description: "Documentación oficial de Love Send",
     },
-    servers: [
-      {
-        url: process.env.NODE_ENV === 'production'
-          ? "https://lovesendback.wolfcodetech.com"
-          : "http://localhost:3000",
-        description: "Servidor API"
-      }
-    ],
+    servers: [{ url: env.baseUrl, description: "Servidor API" }],
     components: {
       securitySchemes: {
         ApiKeyAuth: { type: "apiKey", in: "header", name: "x-api-key" },
