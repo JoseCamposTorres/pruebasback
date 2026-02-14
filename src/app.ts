@@ -14,6 +14,7 @@ import orderRoutes from './routes/orderRoutes';
 import userRoutes from './routes/userRoutes';
 
 import { apiLimiter } from './config/securityConfig';
+import db from './config/db';
 
 const app: Application = express();
 
@@ -69,5 +70,14 @@ app.use('/api/v1/products-client', productRoutes);
 app.use('/api/v1/products', productAdminRoutes);
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/users', userRoutes);
+
+app.get('/api/v1/health', async (_req, res) => {
+  try {
+    await db.query('SELECT 1');
+    res.json({ status: 'ok', db: true });
+  } catch (err: any) {
+    res.status(500).json({ status: 'error', db: false, message: err?.message });
+  }
+});
 
 export default app;
