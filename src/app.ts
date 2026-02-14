@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import path from 'path';
@@ -27,7 +27,7 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: (origin, callback) => {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     if (!origin) return callback(null, true);
     if (env.allowedOrigins.length === 0) {
       const isLocal = origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1');
@@ -71,7 +71,7 @@ app.use('/api/v1/products', productAdminRoutes);
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/users', userRoutes);
 
-app.get('/api/v1/health', async (_req, res) => {
+app.get('/api/v1/health', async (_req: Request, res: Response) => {
   try {
     await db.query('SELECT 1');
     res.json({ status: 'ok', db: true });
